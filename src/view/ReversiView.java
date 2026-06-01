@@ -92,18 +92,16 @@ public class ReversiView extends JFrame {
         btnBackToMenu.addActionListener(listener);
     }
 
-    // Cho phép gắn bộ lắng nghe (Controller) vào tất cả các nút
+    // them su kien click chuot
     public void addGameListener(ActionListener listener) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                // UC-03 3.1.1
-                // Gắn listener vào từng nút đại diện cho ô cờ
                 cells[i][j].addActionListener(listener);
             }
         }
     }
 
-    // Hiển thị bàn cờ và highlight các ô hợp lệ
+    // cap nhat ban co
     public void updateView(int[][] board, int currentPlayer, int blackScore, int whiteScore, boolean[][] validMoves) {
         // duyet qua tung o
         for (int i = 0; i < 8; i++) {
@@ -120,10 +118,9 @@ public class ReversiView extends JFrame {
                 } else {
                     cells[i][j].setText(""); // o trong
 
-                    // UC-03 3.1.0
-                    // Hiển thị gợi ý highlight màu xanh nhạt nếu ô đó là nước đi hợp lệ
+                    // Hien thi goi y
                     if (validMoves != null && validMoves[i][j]) {
-                        cells[i][j].setBackground(new Color(200, 255, 200));
+                        cells[i][j].setBackground(new Color(200, 255, 200)); // Mau xanh nhat
                     }
                 }
             }
