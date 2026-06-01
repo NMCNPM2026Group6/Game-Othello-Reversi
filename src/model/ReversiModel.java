@@ -33,33 +33,15 @@ public class ReversiModel {
         updateScore();
     }
 
-    // Hàm đặt quân cờ chính (UC-03)
+    // UC-03: Đặt quân cờ
     public boolean DatQuanCo(int row, int col) {
-        // UC-03 3.1.4 / UC-03 Alternative Flow 3.2.2
-        // Kiểm tra tính hợp lệ của nước đi dựa trên tọa độ chọn và phe hiện tại
         if (NuocDiHopLe(row, col, LuotChoiHienTai)) {
-            
-            // UC-03 3.1.5
-            // Thực hiện đặt quân cờ của người chơi hiện tại vào vị trí đã chọn
             board[row][col] = LuotChoiHienTai;
-            
-            // UC-03 3.1.6
-            // Lật các quân cờ của đối thủ nằm giữa hai quân cờ của người chơi hiện tại
             latCacQuanCo(row, col);
-            
-            // UC-03 3.1.7
-            // Thực hiện đổi lượt chơi (chuyển đổi BLACK ↔ WHITE)
             DoiLuot();
-            
-            // UC-03 3.1.8
-            // Tính toán và đếm lại số lượng quân cờ của mỗi bên để cập nhật điểm số
             updateScore();
-            
             return true;
         }
-        
-        // UC-03 Alternative Flow 3.2.3
-        // Trả về kết quả false báo hiệu nước đi không thể thực hiện
         return false;
     }
 
@@ -82,7 +64,6 @@ public class ReversiModel {
         return false;
     }
 
-    // Logic kiểm tra quy tắc (chỉ kiểm tra, không lật)
     private boolean NuocDiHopLe(int row, int col, int player) {
         if (row < 0 || row >= 8 || col < 0 || col >= 8 || board[row][col] != EMPTY) {
             return false;
@@ -109,10 +90,12 @@ public class ReversiModel {
         return false;
     }
 
+    // UC-04 4.1.4: Tính toán tất cả các ô hợp lệ cho người chơi hiện tại
     public boolean[][] getValidMoves(int player) {
         boolean[][] validMoves = new boolean[8][8];
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
+                // UC-04 4.1.5: Kiểm tra từng ô bằng NuocDiHopLe(i, j, player)
                 validMoves[i][j] = NuocDiHopLe(i, j, player);
             }
         }
