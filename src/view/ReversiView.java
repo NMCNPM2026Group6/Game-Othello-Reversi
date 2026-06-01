@@ -101,7 +101,7 @@ public class ReversiView extends JFrame {
         }
     }
 
-    // cap nhat ban co
+    // UC-04 4.1.6: Hiển thị bàn cờ và highlight các ô hợp lệ
     public void updateView(int[][] board, int currentPlayer, int blackScore, int whiteScore, boolean[][] validMoves) {
         // duyet qua tung o
         for (int i = 0; i < 8; i++) {
@@ -118,7 +118,8 @@ public class ReversiView extends JFrame {
                 } else {
                     cells[i][j].setText(""); // o trong
 
-                    // Hien thi goi y
+                    // UC-04 4.1.7: Highlight ô hợp lệ bằng màu xanh nhạt
+                    // validMoves[i][j] == true → cells[i][j].setBackground(new Color(200, 255, 200))
                     if (validMoves != null && validMoves[i][j]) {
                         cells[i][j].setBackground(new Color(200, 255, 200)); // Mau xanh nhat
                     }

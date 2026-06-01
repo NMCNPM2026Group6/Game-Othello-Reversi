@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * UC-03: Đặt quân cờ - Xử lý click vào ô hợp lệ để đặt quân
+ * UC-04: Xem gợi ý nước đi - Hệ thống tự động highlight các ô hợp lệ (màu xanh nhạt)
  * 
  * @author Tài
  */
@@ -32,10 +32,10 @@ public class GamePlayController implements ActionListener {
         int row = Integer.parseInt(coords[0]);
         int col = Integer.parseInt(coords[1]);
 
-        // UC-03: Đặt quân cờ
         boolean datCoThanhCong = model.DatQuanCo(row, col);
 
         if (datCoThanhCong) {
+            // UC-04 4.1.1: Sau khi đặt quân thành công, cập nhật gợi ý nước đi hợp lệ
             updateViewFromModel();
             if (onMoveCompleted != null) {
                 onMoveCompleted.run();
@@ -43,13 +43,16 @@ public class GamePlayController implements ActionListener {
         }
     }
 
+    /**
+     * UC-04 4.1.2: Truyền danh sách validMoves sang View để highlight
+     */
     public void updateViewFromModel() {
-        // Cập nhật giao diện bàn cờ cơ bản
         view.updateView(
                 model.getBoard(),
                 model.getLuotChoiHienTai(),
                 model.getBlackScore(),
                 model.getWhiteScore(),
-                null); // Chưa truyền gợi ý ở UC-03
+                // UC-04 4.1.3: model.getValidMoves() trả về boolean[][] các ô hợp lệ
+                model.getValidMoves(model.getLuotChoiHienTai()));
     }
 }
