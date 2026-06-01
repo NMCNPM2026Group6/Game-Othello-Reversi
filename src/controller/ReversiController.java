@@ -80,97 +80,71 @@ public class ReversiController implements ActionListener {
         view.showMenu();
     }
 
-    // Xử lý sự kiện Click vào ô cờ (Nhận tọa độ từ View)
     @Override
     public void actionPerformed(ActionEvent e) {
-        // UC-03 3.1.2 / UC-03  3.2.1
-        // Tiếp nhận sự kiện nhấn từ View, phân tích tọa độ ô cờ được chọn
         String command = e.getActionCommand();
         String[] coords = command.split(",");
         int row = Integer.parseInt(coords[0]);
         int col = Integer.parseInt(coords[1]);
 
-        // UC-03 3.1.3 / UC-03  3.2.3
-        // Gọi phương thức đặt quân cờ trong Model để xử lý nước đi
+        // thuc hien nuoc di
         boolean DatCoThanhCong = model.DatQuanCo(row, col);
 
-        // UC-03 3.1.9
-        // Nếu hợp lệ và đặt thành công, cập nhật giao diện
         if (DatCoThanhCong) {
             updateViewFromModel();
+
+            // xu ly sau khi di
             XuLyLuotTiepTheo();
         }
-        // UC-03  3.2.4
-        // Nếu DatCoThanhCong trả về false (ô chọn không hợp lệ), giữ nguyên trạng thái chờ click tiếp
     }
 
-    // Điều phối lượt chơi tiếp theo sau khi một người đã đặt cờ
     private void XuLyLuotTiepTheo() {
         int LuotTiepTheo = model.getLuotChoiHienTai();
 
-        // UC-03  3.3.1 / UC-03  3.4.1
-        // Kiểm tra xem người chơi kế tiếp có còn nước đi hợp lệ không
+        // kiem tra nguoi ke tiep co di duoc khong
         if (!model.CoNuocDiHopLe(LuotTiepTheo)) {
-            // UC-03  3.3.2
-            // Người chơi kế tiếp bị bỏ lượt, hiển thị thông báo chuyển lượt chơi
+            // nguoi ke tiep khong di duoc
             String name = (LuotTiepTheo == ReversiModel.BLACK) ? "ĐEN" : "TRẮNG";
             view.showMessage(name + " không còn nước đi hợp lệ! Đổi lượt.");
 
-            // UC-03  3.3.3
-            // Gọi Model thực hiện đổi lại lượt chơi về phe hiện tại
+            // trả lai luot
             model.DoiLuot();
-
-            // UC-03  3.3.4
-            // Cập nhật lại giao diện hiển thị gợi ý nước đi cho phe hiện tại
             updateViewFromModel();
 
-            // UC-03  3.4.2
-            // Tiếp tục kiểm tra xem người chơi hiện tại có còn nước đi hợp lệ không
+            // kiem tra nguoi vua danh co di duoc khong
             int LuotBanDau = model.getLuotChoiHienTai();
             if (!model.CoNuocDiHopLe(LuotBanDau)) {
-                // UC-03  3.4.3
-                // Cả hai phe đều không còn nước đi hợp lệ, kích hoạt kết thúc trò chơi
+                // ca 2 deu khong di duoc
                 GameOver();
                 return;
             }
         }
 
-        // UC-03 3.1.10
-        // Trường hợp bình thường, trò chơi tiếp tục diễn ra
-
-        // UC-03  3.5.1
-        // Kiểm tra chế độ chơi với AI được bật và lượt hiện tại là của AI
+        // UC-05 5.1.2: Kiểm tra aiEnabled && lượt hiện tại == aiPlayer
         if (aiEnabled && model.getLuotChoiHienTai() == aiPlayer) {
-            // UC-03  3.5.2
-            // Kích hoạt xử lý nước đi của AI
+            // UC-05 5.1.3: Kích hoạt aiMove()
             aiMove();
         }
     }
 
-    // Quản lý lượt đánh của AI
+    // UC-05 5.1.4: Quản lý lượt đánh của AI
     private void aiMove() {
-        // UC-03  3.5.3
-        // Khởi tạo Timer delay 500ms tạo thời gian chờ xử lý cho AI
+        // UC-05 5.1.5: Khởi tạo Timer delay 500ms
         pendingAiTimer = new Timer(500, e -> {
-            // UC-03  3.5.4
-            // Gọi thuật toán tìm nước đi tối ưu cho AI dựa trên bàn cờ hiện tại
+            // UC-05 5.1.6: ai.findBestMove(model.getBoard()) - Minimax + Alpha-Beta
             int[] bestMove = ai.findBestMove(model.getBoard());
 
             if (bestMove != null) {
                 int row = bestMove[0];
                 int col = bestMove[1];
 
-                // UC-03  3.5.6
-                // Gọi Model thực hiện nước đi của AI tại tọa độ tối ưu
+                // UC-05 5.1.7: model.DatQuanCo(row, col)
                 boolean success = model.DatQuanCo(row, col);
 
                 if (success) {
-                    // UC-03  3.5.7
-                    // AI đi thành công, cập nhật trạng thái bàn cờ lên View
+                    // UC-05 5.1.8: Cập nhật View
                     updateViewFromModel();
-
-                    // UC-03  3.5.8
-                    // Tiếp tục gọi đệ quy điều phối lượt tiếp theo sau nước đi của AI
+                    // UC-05 5.1.9: Đệ quy XuLyLuotTiepTheo()
                     XuLyLuotTiepTheo();
                 }
             }
@@ -179,16 +153,10 @@ public class ReversiController implements ActionListener {
         pendingAiTimer.start();
     }
 
-    // Xử lý khi trò chơi kết thúc
     private void GameOver() {
         String result = model.getGameResult();
-
-        // UC-03  3.4.4
-        // Hiển thị kết quả chung cuộc thắng/thua/hòa ra màn hình
         view.showMessage("TRÒ CHƠI KẾT THÚC!\n" + result);
 
-        // UC-03  3.4.5
-        // Hiển thị hộp thoại 3 lựa chọn (Chơi lại, Về Menu, Thoát) và thực hiện tương ứng
         Object[] options = { "Chơi lại", "Về Menu", "Thoát" };
         int choice = javax.swing.JOptionPane.showOptionDialog(
                 view, "Bạn muốn làm gì?", "Game Over",
@@ -205,7 +173,6 @@ public class ReversiController implements ActionListener {
         }
     }
 
-    // Kết nối dữ liệu từ Model đẩy ra giao diện
     private void updateViewFromModel() {
         view.updateView(
                 model.getBoard(),
