@@ -80,7 +80,6 @@ public class ReversiController implements ActionListener {
         view.showMenu();
     }
 
-    // Xử lý sự kiện Click vào ô cờ (Nhận tọa độ từ View)
     @Override
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
@@ -122,28 +121,31 @@ public class ReversiController implements ActionListener {
             }
         }
 
-        // Nếu đến lượt AI thì AI tự động đi
+        // UC-05 5.1.2: Kiểm tra aiEnabled && lượt hiện tại == aiPlayer
         if (aiEnabled && model.getLuotChoiHienTai() == aiPlayer) {
+            // UC-05 5.1.3: Kích hoạt aiMove()
             aiMove();
         }
     }
 
-    // AI thực hiện nước đi
+    // UC-05 5.1.4: Quản lý lượt đánh của AI
     private void aiMove() {
-        // Dùng Timer để delay một chút, tránh AI đi ngay lập tức
+        // UC-05 5.1.5: Khởi tạo Timer delay 500ms
         pendingAiTimer = new Timer(500, e -> {
-            // Tìm nước đi tốt nhất
+            // UC-05 5.1.6: ai.findBestMove(model.getBoard()) - Minimax + Alpha-Beta
             int[] bestMove = ai.findBestMove(model.getBoard());
 
             if (bestMove != null) {
                 int row = bestMove[0];
                 int col = bestMove[1];
 
-                // Thực hiện nước đi
+                // UC-05 5.1.7: model.DatQuanCo(row, col)
                 boolean success = model.DatQuanCo(row, col);
 
                 if (success) {
+                    // UC-05 5.1.8: Cập nhật View
                     updateViewFromModel();
+                    // UC-05 5.1.9: Đệ quy XuLyLuotTiepTheo()
                     XuLyLuotTiepTheo();
                 }
             }

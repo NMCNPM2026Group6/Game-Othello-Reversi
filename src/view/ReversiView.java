@@ -121,7 +121,7 @@ public class ReversiView extends JFrame {
                     // UC-04 4.1.7: Highlight ô hợp lệ bằng màu xanh nhạt
                     // validMoves[i][j] == true → cells[i][j].setBackground(new Color(200, 255, 200))
                     if (validMoves != null && validMoves[i][j]) {
-                        cells[i][j].setBackground(new Color(200, 255, 200));
+                        cells[i][j].setBackground(new Color(200, 255, 200)); // Mau xanh nhat
                     }
                 }
             }
