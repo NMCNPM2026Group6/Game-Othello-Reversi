@@ -2,7 +2,11 @@ package controller;
 
 import view.HowToPlayDialog;
 import view.ReversiView;
-
+/**
+ * UC-07: Xem hướng dẫn chơi - Đăng ký sự kiện click vào nút "Hướng dẫn chơi" trên menu
+ *
+ * @author Nguyễn Thị Hồng Hạnh
+ */
 public class HelpController {
     private ReversiView view;
 

@@ -1,15 +1,15 @@
 package controller;
 
-import model.ReversiModel;
 import model.ReversiAI;
 import model.GameConfig;
 import model.AiDifficulty;
+import model.ReversiModel;
 import view.ReversiView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
-public class ReversiController implements ActionListener {
+public class ReversiController extends BaseController implements ActionListener {
     private ReversiModel model;
     private ReversiView view;
     private ReversiAI ai;
@@ -46,6 +46,7 @@ public class ReversiController implements ActionListener {
             this.view.showGame();
         });
 
+        // Đăng ký sự kiện click nút "Hướng dẫn chơi" trên Menu
         this.view.getMenuPanel().addHowToPlayListener(e -> {
             new view.HowToPlayDialog(this.view).setVisible(true);
         });
@@ -163,23 +164,19 @@ public class ReversiController implements ActionListener {
                 javax.swing.JOptionPane.DEFAULT_OPTION, javax.swing.JOptionPane.QUESTION_MESSAGE,
                 null, options, options[0]);
 
+        /**
+         * UC-09 9.1.1: Reset bàn cờ và điểm số để bắt đầu ván mới
+         */
         if (choice == 0) { // Chơi lại
+            // UC-09 9.1.2: model.resetGame() - khởi tạo lại bàn cờ
             model.resetGame();
+            // UC-09 9.1.3: updateViewFromModel() - cập nhật View mới
             updateViewFromModel();
         } else if (choice == 1) { // Về Menu
             returnToMenu();
         } else { // Thoát
             System.exit(0);
         }
-    }
-
-    private void updateViewFromModel() {
-        view.updateView(
-                model.getBoard(),
-                model.getLuotChoiHienTai(),
-                model.getBlackScore(),
-                model.getWhiteScore(),
-                model.getValidMoves(model.getLuotChoiHienTai()));
     }
 
     // Bật/tắt AI
