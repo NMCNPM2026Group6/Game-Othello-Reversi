@@ -41,9 +41,7 @@ public class MainMenuPanel extends JPanel {
         JPanel mainCard = new JPanel();
         mainCard.setLayout(new BoxLayout(mainCard, BoxLayout.Y_AXIS));
 
-        // UC-01 1.1.5: Tạo nút "Chơi 2 Người" (PVP)
         btnPvp = createMenuButton("Chơi 2 Người", Color.decode("#2196F3"));
-        // UC-01 1.1.6: Tạo nút "Đấu với máy" (PVE) -> chuyển sang card AI
         btnPve = createMenuButton("Đấu với máy", Color.decode("#4CAF50"));
         btnHowToPlay = createMenuButton("Hướng dẫn", Color.decode("#9C27B0"));
         btnExit = createMenuButton("Thoát", Color.decode("#616161"));
@@ -64,8 +62,11 @@ public class MainMenuPanel extends JPanel {
         aiLabel.setForeground(new Color(50, 50, 50));
         aiLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // UC-02 2.1.6: Tạo nút độ khó Dễ
         btnAiEasy = createMenuButton("Dễ", Color.decode("#4CAF50"));
+        // UC-02 2.1.7: Tạo nút độ khó Bình thường
         btnAiNormal = createMenuButton("Bình thường", Color.decode("#FF9800"));
+        // UC-02 2.1.8: Tạo nút độ khó Khó
         btnAiHard = createMenuButton("Khó", Color.decode("#F44336"));
         btnBackToMain = createMenuButton("Quay lại", Color.decode("#757575"));
 
@@ -85,7 +86,6 @@ public class MainMenuPanel extends JPanel {
         container.add(menuCards);
         add(container);
 
-        // UC-01 1.1.7: btnPve click -> chuyển menuCardLayout sang "AI"
         btnPve.addActionListener(e -> menuCardLayout.show(menuCards, "AI"));
         btnBackToMain.addActionListener(e -> menuCardLayout.show(menuCards, "MAIN"));
     }
@@ -122,19 +122,21 @@ public class MainMenuPanel extends JPanel {
         menuCardLayout.show(menuCards, "MAIN");
     }
 
-    // UC-01 1.1.8: Gắn listener cho nút PVP
     public void addPvpListener(ActionListener l) {
         btnPvp.addActionListener(l);
     }
 
+    // UC-02 2.1.9: Gắn listener cho nút Dễ
     public void addAiEasyListener(ActionListener l) {
         btnAiEasy.addActionListener(l);
     }
 
+    // UC-02 2.1.10: Gắn listener cho nút Bình thường
     public void addAiNormalListener(ActionListener l) {
         btnAiNormal.addActionListener(l);
     }
 
+    // UC-02 2.1.11: Gắn listener cho nút Khó
     public void addAiHardListener(ActionListener l) {
         btnAiHard.addActionListener(l);
     }
