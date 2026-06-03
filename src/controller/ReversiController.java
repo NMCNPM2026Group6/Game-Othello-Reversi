@@ -25,9 +25,8 @@ public class ReversiController implements ActionListener {
         // dang ky su kien
         this.view.addGameListener(this);
 
-        // UC-01 1.1.3: addPvpListener -> chế độ 2 người chơi
+        // menu listeners
         this.view.getMenuPanel().addPvpListener(e -> {
-            // UC-01 1.1.4: configure(GameConfig.pvp()) và showGame()
             configure(GameConfig.pvp());
             this.view.showGame();
         });
@@ -59,9 +58,7 @@ public class ReversiController implements ActionListener {
         this.view.showMenu();
     }
 
-    // UC-01 1.1.9 / UC-02 2.1.5: Cấu hình chế độ chơi từ GameConfig
     public void configure(GameConfig config) {
-        // UC-01 1.1.10: config.isAiEnabled() - xác định PVP hay PVE
         this.aiEnabled = config.isAiEnabled();
         String info = "Chế độ: " + (aiEnabled ? "Đấu với máy" : "2 Người");
         if (config.isAiEnabled()) {
