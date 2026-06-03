@@ -1,15 +1,15 @@
 package controller;
 
+import model.ReversiModel;
 import model.ReversiAI;
 import model.GameConfig;
 import model.AiDifficulty;
-import model.ReversiModel;
 import view.ReversiView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
-public class ReversiController extends BaseController implements ActionListener {
+public class ReversiController implements ActionListener {
     private ReversiModel model;
     private ReversiView view;
     private ReversiAI ai;
@@ -25,8 +25,9 @@ public class ReversiController extends BaseController implements ActionListener 
         // dang ky su kien
         this.view.addGameListener(this);
 
-        // menu listeners
+        // UC-01 1.1.3: addPvpListener -> chế độ 2 người chơi
         this.view.getMenuPanel().addPvpListener(e -> {
+            // UC-01 1.1.4: configure(GameConfig.pvp()) và showGame()
             configure(GameConfig.pvp());
             this.view.showGame();
         });
@@ -46,7 +47,6 @@ public class ReversiController extends BaseController implements ActionListener 
             this.view.showGame();
         });
 
-        // Đăng ký sự kiện click nút "Hướng dẫn chơi" trên Menu
         this.view.getMenuPanel().addHowToPlayListener(e -> {
             new view.HowToPlayDialog(this.view).setVisible(true);
         });
@@ -59,7 +59,9 @@ public class ReversiController extends BaseController implements ActionListener 
         this.view.showMenu();
     }
 
+    // UC-01 1.1.9 / UC-02 2.1.5: Cấu hình chế độ chơi từ GameConfig
     public void configure(GameConfig config) {
+        // UC-01 1.1.10: config.isAiEnabled() - xác định PVP hay PVE
         this.aiEnabled = config.isAiEnabled();
         String info = "Chế độ: " + (aiEnabled ? "Đấu với máy" : "2 Người");
         if (config.isAiEnabled()) {
@@ -121,31 +123,28 @@ public class ReversiController extends BaseController implements ActionListener 
             }
         }
 
-        // UC-05 5.1.2: Kiểm tra aiEnabled && lượt hiện tại == aiPlayer
+        // Nếu đến lượt AI thì AI tự động đi
         if (aiEnabled && model.getLuotChoiHienTai() == aiPlayer) {
-            // UC-05 5.1.3: Kích hoạt aiMove()
             aiMove();
         }
     }
 
-    // UC-05 5.1.4: Quản lý lượt đánh của AI
+    // AI thực hiện nước đi
     private void aiMove() {
-        // UC-05 5.1.5: Khởi tạo Timer delay 500ms
+        // Dùng Timer để delay một chút, tránh AI đi ngay lập tức
         pendingAiTimer = new Timer(500, e -> {
-            // UC-05 5.1.6: ai.findBestMove(model.getBoard()) - Minimax + Alpha-Beta
+            // Tìm nước đi tốt nhất
             int[] bestMove = ai.findBestMove(model.getBoard());
 
             if (bestMove != null) {
                 int row = bestMove[0];
                 int col = bestMove[1];
 
-                // UC-05 5.1.7: model.DatQuanCo(row, col)
+                // Thực hiện nước đi
                 boolean success = model.DatQuanCo(row, col);
 
                 if (success) {
-                    // UC-05 5.1.8: Cập nhật View
                     updateViewFromModel();
-                    // UC-05 5.1.9: Đệ quy XuLyLuotTiepTheo()
                     XuLyLuotTiepTheo();
                 }
             }
@@ -164,19 +163,23 @@ public class ReversiController extends BaseController implements ActionListener 
                 javax.swing.JOptionPane.DEFAULT_OPTION, javax.swing.JOptionPane.QUESTION_MESSAGE,
                 null, options, options[0]);
 
-        /**
-         * UC-09 9.1.1: Reset bàn cờ và điểm số để bắt đầu ván mới
-         */
         if (choice == 0) { // Chơi lại
-            // UC-09 9.1.2: model.resetGame() - khởi tạo lại bàn cờ
             model.resetGame();
-            // UC-09 9.1.3: updateViewFromModel() - cập nhật View mới
             updateViewFromModel();
         } else if (choice == 1) { // Về Menu
             returnToMenu();
         } else { // Thoát
             System.exit(0);
         }
+    }
+
+    private void updateViewFromModel() {
+        view.updateView(
+                model.getBoard(),
+                model.getLuotChoiHienTai(),
+                model.getBlackScore(),
+                model.getWhiteScore(),
+                model.getValidMoves(model.getLuotChoiHienTai()));
     }
 
     // Bật/tắt AI
