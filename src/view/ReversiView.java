@@ -3,6 +3,7 @@ package view;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import model.ReversiModel;
 
 public class ReversiView extends JFrame {
     private JButton[][] cells;

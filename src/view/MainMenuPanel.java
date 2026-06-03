@@ -9,11 +9,11 @@ import java.awt.event.MouseEvent;
 public class MainMenuPanel extends JPanel {
     private JButton btnPvp;
     private JButton btnPve;
+    private JButton btnHowToPlay;
+    private JButton btnExit;
     private JButton btnAiEasy;
     private JButton btnAiNormal;
     private JButton btnAiHard;
-    private JButton btnHowToPlay;
-    private JButton btnExit;
     private JButton btnBackToMain;
 
     private CardLayout menuCardLayout;
@@ -35,14 +35,15 @@ public class MainMenuPanel extends JPanel {
         container.add(title);
         container.add(Box.createRigidArea(new Dimension(0, 40)));
 
-        // CardLayout để chuyển giữa Menu chính và Chọn độ khó
         menuCardLayout = new CardLayout();
         menuCards = new JPanel(menuCardLayout);
 
         JPanel mainCard = new JPanel();
         mainCard.setLayout(new BoxLayout(mainCard, BoxLayout.Y_AXIS));
 
+        // UC-01 1.1.5: Tạo nút "Chơi 2 Người" (PVP)
         btnPvp = createMenuButton("Chơi 2 Người", Color.decode("#2196F3"));
+        // UC-01 1.1.6: Tạo nút "Đấu với máy" (PVE) -> chuyển sang card AI
         btnPve = createMenuButton("Đấu với máy", Color.decode("#4CAF50"));
         btnHowToPlay = createMenuButton("Hướng dẫn", Color.decode("#9C27B0"));
         btnExit = createMenuButton("Thoát", Color.decode("#616161"));
@@ -84,7 +85,7 @@ public class MainMenuPanel extends JPanel {
         container.add(menuCards);
         add(container);
 
-        // Logic chuyển đổi nội bộ
+        // UC-01 1.1.7: btnPve click -> chuyển menuCardLayout sang "AI"
         btnPve.addActionListener(e -> menuCardLayout.show(menuCards, "AI"));
         btnBackToMain.addActionListener(e -> menuCardLayout.show(menuCards, "MAIN"));
     }
@@ -102,7 +103,6 @@ public class MainMenuPanel extends JPanel {
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // Hover effect
         btn.addMouseListener(new MouseAdapter() {
             Color original = btn.getBackground();
 
@@ -122,7 +122,7 @@ public class MainMenuPanel extends JPanel {
         menuCardLayout.show(menuCards, "MAIN");
     }
 
-    // Listener registration methods
+    // UC-01 1.1.8: Gắn listener cho nút PVP
     public void addPvpListener(ActionListener l) {
         btnPvp.addActionListener(l);
     }
