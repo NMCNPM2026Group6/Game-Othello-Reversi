@@ -91,6 +91,7 @@ public class ReversiController implements ActionListener {
         boolean DatCoThanhCong = model.DatQuanCo(row, col);
 
         if (DatCoThanhCong) {
+            // UC-06 6.1.1: Sau khi đặt quân thành công, cập nhật điểm số lên View
             updateViewFromModel();
 
             // xu ly sau khi di
@@ -170,10 +171,12 @@ public class ReversiController implements ActionListener {
         }
     }
 
+    // UC-06 6.1.2: Lấy điểm số từ Model và truyền cho View hiển thị
     private void updateViewFromModel() {
         view.updateView(
                 model.getBoard(),
                 model.getLuotChoiHienTai(),
+                // UC-06 6.1.3: model.getBlackScore() và model.getWhiteScore() trả về số quân mỗi bên
                 model.getBlackScore(),
                 model.getWhiteScore(),
                 model.getValidMoves(model.getLuotChoiHienTai()));
