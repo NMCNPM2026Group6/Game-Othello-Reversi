@@ -1,8 +1,8 @@
 package controller;
 
-import model.ReversiModel;
 import model.ReversiAI;
 import model.AiDifficulty;
+import model.ReversiModel;
 import view.ReversiView;
 import javax.swing.Timer;
 
@@ -11,19 +11,17 @@ import javax.swing.Timer;
  * 
  * @author ThuyQuynh
  */
-public class AIController {
+public class AIController extends BaseController {
     private ReversiModel model;
     private ReversiView view;
     private ReversiAI ai;
     private boolean aiEnabled = false;
     private int aiPlayer = ReversiModel.WHITE;
     private Timer pendingAiTimer;
-    private GamePlayController gamePlayController;
 
-    public AIController(ReversiModel model, ReversiView view, GamePlayController gamePlayController) {
+    public AIController(ReversiModel model, ReversiView view) {
         this.model = model;
         this.view = view;
-        this.gamePlayController = gamePlayController;
     }
 
     public void configureAI(boolean enabled, AiDifficulty difficulty) {
@@ -56,7 +54,7 @@ public class AIController {
         if (!model.CoNuocDiHopLe(luotTiepTheo)) {
             view.showMessage("Không còn nước đi hợp lệ! Đổi lượt.");
             model.DoiLuot();
-            gamePlayController.updateViewFromModel();
+            updateViewFromModel();
         }
 
         // UC-05 5.1.2: Kiểm tra aiEnabled && lượt hiện tại == aiPlayer
@@ -82,7 +80,7 @@ public class AIController {
 
                 if (success) {
                     // UC-05 5.1.8: Cập nhật View sau nước đi của AI
-                    gamePlayController.updateViewFromModel();
+                    updateViewFromModel();
                     // UC-05 5.1.9: Gọi đệ quy xuLyLuotTiepTheo()
                     xuLyLuotTiepTheo();
                 }
