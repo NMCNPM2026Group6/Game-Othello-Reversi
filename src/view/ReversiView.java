@@ -126,7 +126,8 @@ public class ReversiView extends JFrame {
             }
         }
 
-        // hien thi luot choi
+        // UC-06 6.1.7: Hiển thị điểm số lên statusLabel
+        // statusLabel.setText("Lượt: [Phe] | Đen: blackScore - Trắng: whiteScore")
         if (currentPlayer == 1) {
             statusLabel.setText("Lượt: Đen | Đen: " + blackScore + " - Trắng: " + whiteScore);
         } else {
