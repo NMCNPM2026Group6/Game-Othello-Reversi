@@ -101,20 +101,20 @@ public class ReversiController implements ActionListener {
     private void XuLyLuotTiepTheo() {
         int LuotTiepTheo = model.getLuotChoiHienTai();
 
-        // kiem tra nguoi ke tiep co di duoc khong
+        // UC-08 8.1.2: model.CoNuocDiHopLe(LuotTiepTheo)
         if (!model.CoNuocDiHopLe(LuotTiepTheo)) {
             // nguoi ke tiep khong di duoc
             String name = (LuotTiepTheo == ReversiModel.BLACK) ? "ĐEN" : "TRẮNG";
             view.showMessage(name + " không còn nước đi hợp lệ! Đổi lượt.");
 
-            // trả lai luot
+            // tra lai luot
             model.DoiLuot();
             updateViewFromModel();
 
-            // kiem tra nguoi vua danh co di duoc khong
+            // UC-08 8.1.3: model.CoNuocDiHopLe(LuotBanDau) - kiểm tra phe còn lại
             int LuotBanDau = model.getLuotChoiHienTai();
             if (!model.CoNuocDiHopLe(LuotBanDau)) {
-                // ca 2 deu khong di duoc
+                // UC-08 8.1.4: Cả hai đều không đi được -> GameOver()
                 GameOver();
                 return;
             }
