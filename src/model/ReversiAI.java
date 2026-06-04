@@ -24,7 +24,7 @@ public class ReversiAI {
         this.maxDepth = difficulty.getDepth();
     }
 
-    // UC-05 5.1.12: Thuật toán Minimax + Alpha-Beta Pruning
+    // UC-05: Thuật toán Minimax tìm nước đi tốt nhất
     public int minimax(boolean maxmin, int[][] state, int depth, int player, int alpha, int beta) {
         if (depth == 0 || isOver(state)) {
             return heuristic(state);
@@ -75,10 +75,8 @@ public class ReversiAI {
         }
     }
 
-    // UC-05 5.1.10: Tìm nước đi tốt nhất dựa trên bảng hiện tại
     public int[] findBestMove(int[][] board) {
         bestMove = new int[2];
-        // UC-05 5.1.11: Gọi minimax(true, board, maxDepth, aiPlayer, -∞, +∞)
         minimax(true, board, maxDepth, aiPlayer, Integer.MIN_VALUE, Integer.MAX_VALUE);
         return bestMove;
     }

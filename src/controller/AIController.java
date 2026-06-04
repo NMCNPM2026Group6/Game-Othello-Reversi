@@ -54,9 +54,19 @@ public class AIController {
         int luotTiepTheo = model.getLuotChoiHienTai();
 
         if (!model.CoNuocDiHopLe(luotTiepTheo)) {
-            view.showMessage("Không còn nước đi hợp lệ! Đổi lượt.");
+            String name = (luotTiepTheo == ReversiModel.BLACK) ? "ĐEN" : "TRẮNG";
+            view.showMessage(name + " không còn nước đi hợp lệ! Đổi lượt.");
+
             model.DoiLuot();
             gamePlayController.updateViewFromModel();
+
+            int luotBanDau = model.getLuotChoiHienTai();
+            // UC-08 8.1.3: model.CoNuocDiHopLe(luotBanDau) - kiểm tra phe còn lại
+            if (!model.CoNuocDiHopLe(luotBanDau)) {
+                // UC-08 8.1.4: Cả hai bên đều không thể đi tiếp -> gameOver()
+                gameOver();
+                return;
+            }
         }
 
         // UC-05 5.1.2: Kiểm tra aiEnabled && lượt hiện tại == aiPlayer
@@ -90,5 +100,12 @@ public class AIController {
         });
         pendingAiTimer.setRepeats(false);
         pendingAiTimer.start();
+    }
+
+    /**
+     * UC-08 8.1.5: Hiển thị hộp thoại kết thúc và kết quả
+     */
+    private void gameOver() {
+        // Will be implemented in the next commit
     }
 }
