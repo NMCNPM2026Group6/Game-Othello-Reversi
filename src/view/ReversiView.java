@@ -63,6 +63,7 @@ public class ReversiView extends JFrame {
         statusLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         bottomPanel.add(statusLabel, BorderLayout.CENTER);
 
+        // UC-10 10.1.7: Tạo nút "Về Menu" trên màn hình game
         btnBackToMenu = new JButton("← Về Menu");
         btnBackToMenu.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         bottomPanel.add(btnBackToMenu, BorderLayout.EAST);
@@ -75,7 +76,7 @@ public class ReversiView extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    // Navigation methods
+    // UC-10 10.1.6: Chuyển CardLayout về "MENU"
     public void showMenu() {
         cardLayout.show(cardContainer, "MENU");
     }
@@ -88,6 +89,7 @@ public class ReversiView extends JFrame {
         return menuPanel;
     }
 
+    // UC-10 10.1.8: Gắn listener cho nút "Về Menu"
     public void addBackToMenuListener(ActionListener listener) {
         btnBackToMenu.addActionListener(listener);
     }
@@ -101,7 +103,7 @@ public class ReversiView extends JFrame {
         }
     }
 
-    // UC-04 4.1.6: Hiển thị bàn cờ và highlight các ô hợp lệ
+    // cap nhat ban co
     public void updateView(int[][] board, int currentPlayer, int blackScore, int whiteScore, boolean[][] validMoves) {
         // duyet qua tung o
         for (int i = 0; i < 8; i++) {
@@ -118,8 +120,7 @@ public class ReversiView extends JFrame {
                 } else {
                     cells[i][j].setText(""); // o trong
 
-                    // UC-04 4.1.7: Highlight ô hợp lệ bằng màu xanh nhạt
-                    // validMoves[i][j] == true → cells[i][j].setBackground(new Color(200, 255, 200))
+                    // Hien thi goi y
                     if (validMoves != null && validMoves[i][j]) {
                         cells[i][j].setBackground(new Color(200, 255, 200)); // Mau xanh nhat
                     }
