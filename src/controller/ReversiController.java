@@ -120,31 +120,28 @@ public class ReversiController implements ActionListener {
             }
         }
 
-        // UC-05 5.1.2: Kiểm tra aiEnabled && lượt hiện tại == aiPlayer
+        // Nếu đến lượt AI thì AI tự động đi
         if (aiEnabled && model.getLuotChoiHienTai() == aiPlayer) {
-            // UC-05 5.1.3: Kích hoạt aiMove()
             aiMove();
         }
     }
 
-    // UC-05 5.1.4: Quản lý lượt đánh của AI
+    // AI thực hiện nước đi
     private void aiMove() {
-        // UC-05 5.1.5: Khởi tạo Timer delay 500ms
+        // Dùng Timer để delay một chút, tránh AI đi ngay lập tức
         pendingAiTimer = new Timer(500, e -> {
-            // UC-05 5.1.6: ai.findBestMove(model.getBoard()) - Minimax + Alpha-Beta
+            // Tìm nước đi tốt nhất
             int[] bestMove = ai.findBestMove(model.getBoard());
 
             if (bestMove != null) {
                 int row = bestMove[0];
                 int col = bestMove[1];
 
-                // UC-05 5.1.7: model.DatQuanCo(row, col)
+                // Thực hiện nước đi
                 boolean success = model.DatQuanCo(row, col);
 
                 if (success) {
-                    // UC-05 5.1.8: Cập nhật View
                     updateViewFromModel();
-                    // UC-05 5.1.9: Đệ quy XuLyLuotTiepTheo()
                     XuLyLuotTiepTheo();
                 }
             }
@@ -153,16 +150,21 @@ public class ReversiController implements ActionListener {
         pendingAiTimer.start();
     }
 
+    // UC-08 8.1.5: Xử lý khi trò chơi kết thúc
     private void GameOver() {
+        // UC-08 8.1.6: model.getGameResult() - lấy kết quả
         String result = model.getGameResult();
+        // UC-08 8.1.7: view.showMessage() - hiển thị kết quả chung cuộc
         view.showMessage("TRÒ CHƠI KẾT THÚC!\n" + result);
 
+        // UC-08 8.1.8: JOptionPane.showOptionDialog() - hiển thị 3 lựa chọn
         Object[] options = { "Chơi lại", "Về Menu", "Thoát" };
         int choice = javax.swing.JOptionPane.showOptionDialog(
                 view, "Bạn muốn làm gì?", "Game Over",
                 javax.swing.JOptionPane.DEFAULT_OPTION, javax.swing.JOptionPane.QUESTION_MESSAGE,
                 null, options, options[0]);
 
+        // UC-08 8.1.9: Xử lý lựa chọn
         if (choice == 0) { // Chơi lại
             model.resetGame();
             updateViewFromModel();
