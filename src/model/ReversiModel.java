@@ -90,12 +90,10 @@ public class ReversiModel {
         return false;
     }
 
-    // UC-04 4.1.4: Tính toán tất cả các ô hợp lệ cho người chơi hiện tại
     public boolean[][] getValidMoves(int player) {
         boolean[][] validMoves = new boolean[8][8];
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                // UC-04 4.1.5: Kiểm tra từng ô bằng NuocDiHopLe(i, j, player)
                 validMoves[i][j] = NuocDiHopLe(i, j, player);
             }
         }
@@ -128,14 +126,17 @@ public class ReversiModel {
         }
     }
 
+    // UC-06 6.1.4: Đếm lại toàn bộ số lượng quân Đen và Trắng trên bàn cờ
     private void updateScore() {
         blackScore = 0;
         whiteScore = 0;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (board[i][j] == BLACK) {
+                    // UC-06 6.1.5: Tăng blackScore khi gặp quân Đen
                     blackScore++;
                 } else if (board[i][j] == WHITE) {
+                    // UC-06 6.1.5: Tăng whiteScore khi gặp quân Trắng
                     whiteScore++;
                 }
             }
@@ -154,6 +155,7 @@ public class ReversiModel {
 
     public int[][] getBoard() { return board; }
     public int getLuotChoiHienTai() { return LuotChoiHienTai; }
+    // UC-06 6.1.6: Getter cung cấp điểm số cho Controller/View
     public int getBlackScore() { return blackScore; }
     public int getWhiteScore() { return whiteScore; }
 }

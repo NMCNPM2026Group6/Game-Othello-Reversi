@@ -1,8 +1,8 @@
 package controller;
 
-import model.ReversiModel;
 import model.ReversiAI;
 import model.AiDifficulty;
+import model.ReversiModel;
 import view.ReversiView;
 import javax.swing.Timer;
 import javax.swing.JOptionPane;
@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
  * 
  * @author ThuyQuynh
  */
-public class AIController {
+public class AIController extends BaseController {
     private ReversiModel model;
     private ReversiView view;
     private ReversiAI ai;
@@ -23,10 +23,9 @@ public class AIController {
     private Runnable onPlayAgain;
     private Runnable onBackToMenu;
 
-    public AIController(ReversiModel model, ReversiView view, GamePlayController gamePlayController) {
+    public AIController(ReversiModel model, ReversiView view) {
         this.model = model;
         this.view = view;
-        this.gamePlayController = gamePlayController;
     }
 
     public void setOnPlayAgain(Runnable callback) {
@@ -92,6 +91,9 @@ public class AIController {
 
                 if (success) {
                     gamePlayController.updateViewFromModel();
+                    // UC-05 5.1.8: Cập nhật View sau nước đi của AI
+                    updateViewFromModel();
+                    // UC-05 5.1.9: Gọi đệ quy xuLyLuotTiepTheo()
                     xuLyLuotTiepTheo();
                 }
             }
