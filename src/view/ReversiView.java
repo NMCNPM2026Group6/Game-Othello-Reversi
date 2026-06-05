@@ -1,8 +1,8 @@
 package view;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import javax.swing.*;
 
 public class ReversiView extends JFrame {
     private JButton[][] cells;
@@ -88,7 +88,7 @@ public class ReversiView extends JFrame {
         return menuPanel;
     }
 
-    // UC-10 10.1.8: Gắn listener cho nút "Về Menu"
+    // UC-10 10.1.8: Gắn listener cho nút "Về Menu".
     public void addBackToMenuListener(ActionListener listener) {
         btnBackToMenu.addActionListener(listener);
     }
