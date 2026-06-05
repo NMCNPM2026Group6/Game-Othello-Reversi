@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
-public class ReversiController extends BaseController implements ActionListener {
+public class ReversiController implements ActionListener {
     private ReversiModel model;
     private ReversiView view;
     private ReversiAI ai;
@@ -46,12 +46,11 @@ public class ReversiController extends BaseController implements ActionListener 
             this.view.showGame();
         });
 
-        // 7.2 kích hoạt lambda
         this.view.getMenuPanel().addHowToPlayListener(e -> {
-            // 7.7 gọi lệnh setVisible = true ở đây khi có yêu cầu
             new view.HowToPlayDialog(this.view).setVisible(true);
         });
 
+        // UC-11 11.1.1: addExitListener(e -> System.exit(0))
         this.view.getMenuPanel().addExitListener(e -> System.exit(0));
 
         this.view.addBackToMenuListener(e -> returnToMenu());
@@ -93,7 +92,6 @@ public class ReversiController extends BaseController implements ActionListener 
         boolean DatCoThanhCong = model.DatQuanCo(row, col);
 
         if (DatCoThanhCong) {
-            // UC-06 6.1.1: Sau khi đặt quân thành công, cập nhật điểm số lên View
             updateViewFromModel();
 
             // xu ly sau khi di
@@ -104,22 +102,20 @@ public class ReversiController extends BaseController implements ActionListener 
     private void XuLyLuotTiepTheo() {
         int LuotTiepTheo = model.getLuotChoiHienTai();
 
-        // UC-08 8.1.2: model.CoNuocDiHopLe(LuotTiepTheo)
+        // kiem tra nguoi ke tiep co di duoc khong
         if (!model.CoNuocDiHopLe(LuotTiepTheo)) {
             // nguoi ke tiep khong di duoc
             String name = (LuotTiepTheo == ReversiModel.BLACK) ? "ĐEN" : "TRẮNG";
             view.showMessage(name + " không còn nước đi hợp lệ! Đổi lượt.");
 
-            // tra lai luot
+            // trả lai luot
             model.DoiLuot();
             updateViewFromModel();
 
-            // UC-08 8.1.3: model.CoNuocDiHopLe(LuotBanDau) - kiểm tra phe còn lại
+            // kiem tra nguoi vua danh co di duoc khong
             int LuotBanDau = model.getLuotChoiHienTai();
             if (!model.CoNuocDiHopLe(LuotBanDau)) {
                 // ca 2 deu khong di duoc
-                // 9.1 hiển thị hộp thoại kết quả: chơi lại, về menu, thoát
-                // UC-08 8.1.4: Cả hai đều không đi được -> GameOver()
                 GameOver();
                 return;
             }
@@ -155,33 +151,34 @@ public class ReversiController extends BaseController implements ActionListener 
         pendingAiTimer.start();
     }
 
-    // 9.1b1 hàm này có thể được gọi lại nhiều lần theo hành động người chơi
-    // UC-08 8.1.5: Xử lý khi trò chơi kết thúc
     private void GameOver() {
-        // UC-08 8.1.6: model.getGameResult() - lấy kết quả
         String result = model.getGameResult();
-        // UC-08 8.1.7: view.showMessage() - hiển thị kết quả chung cuộc
         view.showMessage("TRÒ CHƠI KẾT THÚC!\n" + result);
 
-        // 9.2 người chơi click nút chơi lại với choice = 0
-        // UC-08 8.1.8: JOptionPane.showOptionDialog() - hiển thị 3 lựa chọn
         Object[] options = { "Chơi lại", "Về Menu", "Thoát" };
         int choice = javax.swing.JOptionPane.showOptionDialog(
                 view, "Bạn muốn làm gì?", "Game Over",
                 javax.swing.JOptionPane.DEFAULT_OPTION, javax.swing.JOptionPane.QUESTION_MESSAGE,
                 null, options, options[0]);
-        // 9.3 kiểm tra điều kiện
-        // UC-08 8.1.9: Xử lý lựa chọn
+
         if (choice == 0) { // Chơi lại
-            // 9.4 gọi lệnh khởi tạo lại lõi
             model.resetGame();
-            // 9.9 gọi nội bộ update giao diện nước đi
             updateViewFromModel();
         } else if (choice == 1) { // Về Menu
             returnToMenu();
-        } else { // Thoát
+        } else {
+            // UC-11 11.1.3: System.exit(0) - thoát game
             System.exit(0);
         }
+    }
+
+    private void updateViewFromModel() {
+        view.updateView(
+                model.getBoard(),
+                model.getLuotChoiHienTai(),
+                model.getBlackScore(),
+                model.getWhiteScore(),
+                model.getValidMoves(model.getLuotChoiHienTai()));
     }
 
     // Bật/tắt AI
