@@ -43,6 +43,7 @@ public class MainMenuPanel extends JPanel {
 
         btnPvp = createMenuButton("Chơi 2 Người", Color.decode("#2196F3"));
         btnPve = createMenuButton("Đấu với máy", Color.decode("#4CAF50"));
+        // tạo nút hướng dẫn
         btnHowToPlay = createMenuButton("Hướng dẫn", Color.decode("#9C27B0"));
         btnExit = createMenuButton("Thoát", Color.decode("#616161"));
 
@@ -141,6 +142,7 @@ public class MainMenuPanel extends JPanel {
         btnAiHard.addActionListener(l);
     }
 
+    // 7.1. Người chơi click nút "Hướng dẫn" trên Menu -> gọi sự kiện
     public void addHowToPlayListener(ActionListener l) {
         btnHowToPlay.addActionListener(l);
     }
