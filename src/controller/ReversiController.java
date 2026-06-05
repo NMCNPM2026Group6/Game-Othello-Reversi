@@ -104,21 +104,22 @@ public class ReversiController extends BaseController implements ActionListener 
     private void XuLyLuotTiepTheo() {
         int LuotTiepTheo = model.getLuotChoiHienTai();
 
-        // kiem tra nguoi ke tiep co di duoc khong
+        // UC-08 8.1.2: model.CoNuocDiHopLe(LuotTiepTheo)
         if (!model.CoNuocDiHopLe(LuotTiepTheo)) {
             // nguoi ke tiep khong di duoc
             String name = (LuotTiepTheo == ReversiModel.BLACK) ? "ĐEN" : "TRẮNG";
             view.showMessage(name + " không còn nước đi hợp lệ! Đổi lượt.");
 
-            // trả lai luot
+            // tra lai luot
             model.DoiLuot();
             updateViewFromModel();
 
-            // kiem tra nguoi vua danh co di duoc khong
+            // UC-08 8.1.3: model.CoNuocDiHopLe(LuotBanDau) - kiểm tra phe còn lại
             int LuotBanDau = model.getLuotChoiHienTai();
             if (!model.CoNuocDiHopLe(LuotBanDau)) {
                 // ca 2 deu khong di duoc
                 // 9.1 hiển thị hộp thoại kết quả: chơi lại, về menu, thoát
+                // UC-08 8.1.4: Cả hai đều không đi được -> GameOver()
                 GameOver();
                 return;
             }
@@ -155,17 +156,22 @@ public class ReversiController extends BaseController implements ActionListener 
     }
 
     // 9.1b1 hàm này có thể được gọi lại nhiều lần theo hành động người chơi
+    // UC-08 8.1.5: Xử lý khi trò chơi kết thúc
     private void GameOver() {
+        // UC-08 8.1.6: model.getGameResult() - lấy kết quả
         String result = model.getGameResult();
+        // UC-08 8.1.7: view.showMessage() - hiển thị kết quả chung cuộc
         view.showMessage("TRÒ CHƠI KẾT THÚC!\n" + result);
 
         // 9.2 người chơi click nút chơi lại với choice = 0
+        // UC-08 8.1.8: JOptionPane.showOptionDialog() - hiển thị 3 lựa chọn
         Object[] options = { "Chơi lại", "Về Menu", "Thoát" };
         int choice = javax.swing.JOptionPane.showOptionDialog(
                 view, "Bạn muốn làm gì?", "Game Over",
                 javax.swing.JOptionPane.DEFAULT_OPTION, javax.swing.JOptionPane.QUESTION_MESSAGE,
                 null, options, options[0]);
         // 9.3 kiểm tra điều kiện
+        // UC-08 8.1.9: Xử lý lựa chọn
         if (choice == 0) { // Chơi lại
             // 9.4 gọi lệnh khởi tạo lại lõi
             model.resetGame();
