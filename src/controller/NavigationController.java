@@ -3,7 +3,7 @@ package controller;
 import view.ReversiView;
 
 /**
- * UC-10: Quay về Menu - Từ màn hình game quay về Main Menu
+ * UC-11: Thoát game - Đóng ứng dụng hoàn toàn
  * 
  * @author Lương Hà
  */
@@ -17,21 +17,26 @@ public class NavigationController {
         registerListeners();
     }
 
-    // UC-10 10.1.1: Đăng ký sự kiện click nút "Về Menu"
+    // UC-10/UC-11: Đăng ký các sự kiện điều hướng
     private void registerListeners() {
         // UC-10 10.1.2: view.addBackToMenuListener(e -> returnToMenu())
         view.addBackToMenuListener(e -> returnToMenu());
+
+        // UC-11 11.1.1: addExitListener(e -> exitGame())
+        view.getMenuPanel().addExitListener(e -> exitGame());
+    }
+
+    public void returnToMenu() {
+        aiController.cancelPendingAI();
+        view.getMenuPanel().resetToMain();
+        view.showMenu();
     }
 
     /**
-     * UC-10 10.1.3: Quay về Main Menu và dừng các tiến trình chạy ngầm
+     * UC-11 11.1.2: Thoát game hoàn toàn
      */
-    public void returnToMenu() {
-        // UC-10 10.1.4: aiController.cancelPendingAI() - dừng Timer AI
-        aiController.cancelPendingAI();
-        // UC-10 10.1.5: view.getMenuPanel().resetToMain() - reset trạng thái menu
-        view.getMenuPanel().resetToMain();
-        // UC-10 10.1.6: view.showMenu() - chuyển CardLayout về "MENU"
-        view.showMenu();
+    public void exitGame() {
+        // UC-11 11.1.3: System.exit(0) - đóng ứng dụng
+        System.exit(0);
     }
 }
