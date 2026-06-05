@@ -3,7 +3,6 @@ package view;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import model.ReversiModel;
 
 public class ReversiView extends JFrame {
     private JButton[][] cells;
@@ -137,7 +136,8 @@ public class ReversiView extends JFrame {
         }
     }
 
-    // hien thi thong bao
+    // UC-08 8.1.7: Hiển thị thông báo kết quả trò chơi
+    // JOptionPane.showMessageDialog(this, message)
     public void showMessage(String message) {
         JOptionPane.showMessageDialog(this, message);
     }

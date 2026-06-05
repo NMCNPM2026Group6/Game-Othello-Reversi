@@ -19,17 +19,20 @@ public class ReversiModel {
     }
 
     public void resetGame() {
+        // 9.5 vòng lặp ma trận 8x8 gán trạng thái Empty cho tất cả
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                board[i][j] = EMPTY;
+                board[i][j] = EMPTY; // 9.2b2 hệ thống giải phóng mảng cờ cũ
             }
         }
-
+        // 9.6 đặt lại 4 quân cờ chuẩn vào trung tâm
         board[3][3] = WHITE;
         board[3][4] = BLACK;
         board[4][3] = BLACK;
         board[4][4] = WHITE;
+        // 9.7 thiết lập lượt đi đầu tiên = BLACK
         LuotChoiHienTai = BLACK;
+        // 9.8 gọi updateScore đặt điểm số về Đen: 2, Trắng: 2
         updateScore();
     }
 
