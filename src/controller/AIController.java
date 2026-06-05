@@ -5,9 +5,10 @@ import model.AiDifficulty;
 import model.ReversiModel;
 import view.ReversiView;
 import javax.swing.Timer;
+import javax.swing.JOptionPane;
 
 /**
- * UC-05: AI đánh quân - AI tự động tính toán và đặt quân tốt nhất (Minimax)
+ * UC-08: Kết thúc game - Hiển thị kết quả khi cả hai bên hết nước đi
  * 
  * @author ThuyQuynh
  */
@@ -18,10 +19,21 @@ public class AIController extends BaseController {
     private boolean aiEnabled = false;
     private int aiPlayer = ReversiModel.WHITE;
     private Timer pendingAiTimer;
+    private GamePlayController gamePlayController;
+    private Runnable onPlayAgain;
+    private Runnable onBackToMenu;
 
     public AIController(ReversiModel model, ReversiView view) {
         this.model = model;
         this.view = view;
+    }
+
+    public void setOnPlayAgain(Runnable callback) {
+        this.onPlayAgain = callback;
+    }
+
+    public void setOnBackToMenu(Runnable callback) {
+        this.onBackToMenu = callback;
     }
 
     public void configureAI(boolean enabled, AiDifficulty difficulty) {
@@ -35,50 +47,50 @@ public class AIController extends BaseController {
         }
     }
 
-    public boolean isAiEnabled() {
-        return aiEnabled;
-    }
-
     public void cancelPendingAI() {
         if (pendingAiTimer != null && pendingAiTimer.isRunning()) {
             pendingAiTimer.stop();
         }
     }
 
-    /**
-     * UC-05 5.1.1: Chuyển lượt và kích hoạt AI
-     */
+    // UC-08 8.1.1: Kiểm tra điều kiện kết thúc game sau mỗi lượt
     public void xuLyLuotTiepTheo() {
         int luotTiepTheo = model.getLuotChoiHienTai();
 
+        // UC-08 8.1.2: model.CoNuocDiHopLe(luotTiepTheo)
         if (!model.CoNuocDiHopLe(luotTiepTheo)) {
-            view.showMessage("Không còn nước đi hợp lệ! Đổi lượt.");
+            String name = (luotTiepTheo == ReversiModel.BLACK) ? "ĐEN" : "TRẮNG";
+            view.showMessage(name + " không còn nước đi hợp lệ! Đổi lượt.");
+
             model.DoiLuot();
-            updateViewFromModel();
+            gamePlayController.updateViewFromModel();
+
+            int luotBanDau = model.getLuotChoiHienTai();
+            // UC-08 8.1.3: model.CoNuocDiHopLe(luotBanDau) - kiểm tra phe còn lại
+            if (!model.CoNuocDiHopLe(luotBanDau)) {
+                // UC-08 8.1.4: Cả hai bên đều không thể đi tiếp -> gameOver()
+                gameOver();
+                return;
+            }
         }
 
-        // UC-05 5.1.2: Kiểm tra aiEnabled && lượt hiện tại == aiPlayer
         if (aiEnabled && model.getLuotChoiHienTai() == aiPlayer) {
-            // UC-05 5.1.3: Kích hoạt aiMove()
             aiMove();
         }
     }
 
-    // UC-05 5.1.4: Quản lý lượt đánh của AI
     private void aiMove() {
-        // UC-05 5.1.5: Khởi tạo Timer delay 500ms
         pendingAiTimer = new Timer(500, e -> {
-            // UC-05 5.1.6: ai.findBestMove(model.getBoard()) - Minimax + Alpha-Beta
             int[] bestMove = ai.findBestMove(model.getBoard());
 
             if (bestMove != null) {
                 int row = bestMove[0];
                 int col = bestMove[1];
 
-                // UC-05 5.1.7: model.DatQuanCo(row, col) - đặt quân tại vị trí tối ưu
                 boolean success = model.DatQuanCo(row, col);
 
                 if (success) {
+                    gamePlayController.updateViewFromModel();
                     // UC-05 5.1.8: Cập nhật View sau nước đi của AI
                     updateViewFromModel();
                     // UC-05 5.1.9: Gọi đệ quy xuLyLuotTiepTheo()
@@ -88,5 +100,34 @@ public class AIController extends BaseController {
         });
         pendingAiTimer.setRepeats(false);
         pendingAiTimer.start();
+    }
+
+    /**
+     * UC-08 8.1.5: Hiển thị hộp thoại kết thúc và kết quả
+     */
+    private void gameOver() {
+        // UC-08 8.1.6: model.getGameResult() - lấy kết quả thắng/thua/hòa
+        String result = model.getGameResult();
+        // UC-08 8.1.7: view.showMessage() - hiển thị kết quả chung cuộc
+        view.showMessage("TRÒ CHƠI KẾT THÚC!\n" + result);
+
+        // UC-08 8.1.8: JOptionPane.showOptionDialog() - hiển thị 3 lựa chọn
+        Object[] options = { "Chơi lại", "Về Menu", "Thoát" };
+        int choice = JOptionPane.showOptionDialog(
+                view, "Bạn muốn làm gì?", "Game Over",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+                null, options, options[0]);
+
+        // UC-08 8.1.9: Xử lý lựa chọn của người chơi
+        if (choice == 0 && onPlayAgain != null) {
+            // UC-08 8.1.9a: onPlayAgain.run() - model.resetGame() + updateView
+            onPlayAgain.run();
+        } else if (choice == 1 && onBackToMenu != null) {
+            // UC-08 8.1.9b: onBackToMenu.run() - returnToMenu()
+            onBackToMenu.run();
+        } else {
+            // UC-08 8.1.9c: System.exit(0)
+            System.exit(0);
+        }
     }
 }

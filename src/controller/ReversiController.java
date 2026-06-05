@@ -102,20 +102,20 @@ public class ReversiController implements ActionListener {
     private void XuLyLuotTiepTheo() {
         int LuotTiepTheo = model.getLuotChoiHienTai();
 
-        // kiem tra nguoi ke tiep co di duoc khong
+        // UC-08 8.1.2: model.CoNuocDiHopLe(LuotTiepTheo)
         if (!model.CoNuocDiHopLe(LuotTiepTheo)) {
             // nguoi ke tiep khong di duoc
             String name = (LuotTiepTheo == ReversiModel.BLACK) ? "ĐEN" : "TRẮNG";
             view.showMessage(name + " không còn nước đi hợp lệ! Đổi lượt.");
 
-            // trả lai luot
+            // tra lai luot
             model.DoiLuot();
             updateViewFromModel();
 
-            // kiem tra nguoi vua danh co di duoc khong
+            // UC-08 8.1.3: model.CoNuocDiHopLe(LuotBanDau) - kiểm tra phe còn lại
             int LuotBanDau = model.getLuotChoiHienTai();
             if (!model.CoNuocDiHopLe(LuotBanDau)) {
-                // ca 2 deu khong di duoc
+                // UC-08 8.1.4: Cả hai đều không đi được -> GameOver()
                 GameOver();
                 return;
             }
@@ -151,16 +151,21 @@ public class ReversiController implements ActionListener {
         pendingAiTimer.start();
     }
 
+    // UC-08 8.1.5: Xử lý khi trò chơi kết thúc
     private void GameOver() {
+        // UC-08 8.1.6: model.getGameResult() - lấy kết quả
         String result = model.getGameResult();
+        // UC-08 8.1.7: view.showMessage() - hiển thị kết quả chung cuộc
         view.showMessage("TRÒ CHƠI KẾT THÚC!\n" + result);
 
+        // UC-08 8.1.8: JOptionPane.showOptionDialog() - hiển thị 3 lựa chọn
         Object[] options = { "Chơi lại", "Về Menu", "Thoát" };
         int choice = javax.swing.JOptionPane.showOptionDialog(
                 view, "Bạn muốn làm gì?", "Game Over",
                 javax.swing.JOptionPane.DEFAULT_OPTION, javax.swing.JOptionPane.QUESTION_MESSAGE,
                 null, options, options[0]);
 
+        // UC-08 8.1.9: Xử lý lựa chọn
         if (choice == 0) { // Chơi lại
             model.resetGame();
             updateViewFromModel();
