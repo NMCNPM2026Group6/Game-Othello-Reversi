@@ -88,10 +88,12 @@ public class ReversiController implements ActionListener {
         int row = Integer.parseInt(coords[0]);
         int col = Integer.parseInt(coords[1]);
 
+        // trạng thái hiện tại 8.0.1 đặt quân cờ ở nước đi cuối cùng
         // thuc hien nuoc di
         boolean DatCoThanhCong = model.DatQuanCo(row, col);
 
         if (DatCoThanhCong) {
+            // 8.0.4 đồng bộ lại giao diện
             updateViewFromModel();
 
             // xu ly sau khi di
@@ -102,6 +104,7 @@ public class ReversiController implements ActionListener {
     private void XuLyLuotTiepTheo() {
         int LuotTiepTheo = model.getLuotChoiHienTai();
 
+        // 8.1 B1
         // kiem tra nguoi ke tiep co di duoc khong
         if (!model.CoNuocDiHopLe(LuotTiepTheo)) {
             // nguoi ke tiep khong di duoc
@@ -112,6 +115,7 @@ public class ReversiController implements ActionListener {
             model.DoiLuot();
             updateViewFromModel();
 
+            // 8.1 B2
             // kiem tra nguoi vua danh co di duoc khong
             int LuotBanDau = model.getLuotChoiHienTai();
             if (!model.CoNuocDiHopLe(LuotBanDau)) {
@@ -152,9 +156,20 @@ public class ReversiController implements ActionListener {
     }
 
     private void GameOver() {
+        // 8.1 B4
         String result = model.getGameResult();
+        // 8.1 B5
         view.showMessage("TRÒ CHƠI KẾT THÚC!\n" + result);
 
+        // 8.2 Khởi tạo ChartPanel thực hiện vẽ đồ thị
+        view.ScoreChartDialog chartDialog = new view.ScoreChartDialog(
+                view,
+                model.getBlackScoreHistory(),
+                model.getWhiteScoreHistory()
+        );
+        // 8.2 hiển thị chart lên
+        chartDialog.setVisible(true);
+        // 8.3
         Object[] options = { "Chơi lại", "Về Menu", "Thoát" };
         int choice = javax.swing.JOptionPane.showOptionDialog(
                 view, "Bạn muốn làm gì?", "Game Over",
