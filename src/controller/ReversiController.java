@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
-public class ReversiController extends BaseController implements ActionListener {
+public class ReversiController implements ActionListener {
     private ReversiModel model;
     private ReversiView view;
     private ReversiAI ai;
@@ -46,15 +46,17 @@ public class ReversiController extends BaseController implements ActionListener 
             this.view.showGame();
         });
 
-        // 7.2 kích hoạt lambda
         this.view.getMenuPanel().addHowToPlayListener(e -> {
-            // 7.7 gọi lệnh setVisible = true ở đây khi có yêu cầu
             new view.HowToPlayDialog(this.view).setVisible(true);
         });
 
+        // UC-11 11.1.1: addExitListener(e -> System.exit(0))
         this.view.getMenuPanel().addExitListener(e -> System.exit(0));
 
         this.view.addBackToMenuListener(e -> returnToMenu());
+        
+        // UC_09 9.1.1 dăng ky nut choi lai
+        this.view.addResetGameListener(e -> handleInGameReset());
 
         // Hiển thị Menu khi khởi động
         this.view.showMenu();
@@ -82,6 +84,34 @@ public class ReversiController extends BaseController implements ActionListener 
         view.showMenu();
     }
 
+    // uc_09 9.1.2 ham su lý choi lai truc tiep
+    private void handleInGameReset() {
+        // Hiển thị hộp thoại xác nhận UI/UX để tránh người dùng bấm nhầm
+        int choice = javax.swing.JOptionPane.showConfirmDialog(
+                view, 
+                "Bạn có chắc chắn muốn hủy ván đấu hiện tại để chơi lại ván mới?", 
+                "Xác nhận chơi lại", 
+                javax.swing.JOptionPane.YES_NO_OPTION, 
+                javax.swing.JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (choice == javax.swing.JOptionPane.YES_OPTION) {
+            // Bước an toàn: Nếu AI đang chạy ngầm, lập tức dừng luồng suy nghĩ của nó lại
+            if (pendingAiTimer != null && pendingAiTimer.isRunning()) {
+                pendingAiTimer.stop();
+            }
+
+            // Tiến hành làm sạch mô hình dữ liệu bàn cờ
+            model.resetGame();
+            updateViewFromModel();
+
+            // Nếu chế độ đấu với máy được kích hoạt và quân đi đầu (ĐEN) trùng phe AI, kích hoạt máy đi luôn
+            if (aiEnabled && model.getLuotChoiHienTai() == aiPlayer) {
+                aiMove();
+            }
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
@@ -89,11 +119,12 @@ public class ReversiController extends BaseController implements ActionListener 
         int row = Integer.parseInt(coords[0]);
         int col = Integer.parseInt(coords[1]);
 
+        // trạng thái hiện tại 8.0.1 đặt quân cờ ở nước đi cuối cùng
         // thuc hien nuoc di
         boolean DatCoThanhCong = model.DatQuanCo(row, col);
 
         if (DatCoThanhCong) {
-            // UC-06 6.1.1: Sau khi đặt quân thành công, cập nhật điểm số lên View
+            // 8.0.4 đồng bộ lại giao diện
             updateViewFromModel();
 
             // xu ly sau khi di
@@ -104,22 +135,22 @@ public class ReversiController extends BaseController implements ActionListener 
     private void XuLyLuotTiepTheo() {
         int LuotTiepTheo = model.getLuotChoiHienTai();
 
-        // UC-08 8.1.2: model.CoNuocDiHopLe(LuotTiepTheo)
+        // 8.1 B1
+        // kiem tra nguoi ke tiep co di duoc khong
         if (!model.CoNuocDiHopLe(LuotTiepTheo)) {
             // nguoi ke tiep khong di duoc
             String name = (LuotTiepTheo == ReversiModel.BLACK) ? "ĐEN" : "TRẮNG";
             view.showMessage(name + " không còn nước đi hợp lệ! Đổi lượt.");
 
-            // tra lai luot
+            // trả lai luot
             model.DoiLuot();
             updateViewFromModel();
 
-            // UC-08 8.1.3: model.CoNuocDiHopLe(LuotBanDau) - kiểm tra phe còn lại
+            // 8.1 B2
+            // kiem tra nguoi vua danh co di duoc khong
             int LuotBanDau = model.getLuotChoiHienTai();
             if (!model.CoNuocDiHopLe(LuotBanDau)) {
                 // ca 2 deu khong di duoc
-                // 9.1 hiển thị hộp thoại kết quả: chơi lại, về menu, thoát
-                // UC-08 8.1.4: Cả hai đều không đi được -> GameOver()
                 GameOver();
                 return;
             }
@@ -155,33 +186,50 @@ public class ReversiController extends BaseController implements ActionListener 
         pendingAiTimer.start();
     }
 
-    // 9.1b1 hàm này có thể được gọi lại nhiều lần theo hành động người chơi
-    // UC-08 8.1.5: Xử lý khi trò chơi kết thúc
     private void GameOver() {
-        // UC-08 8.1.6: model.getGameResult() - lấy kết quả
+        // 8.1 B4
         String result = model.getGameResult();
-        // UC-08 8.1.7: view.showMessage() - hiển thị kết quả chung cuộc
+        // 8.1 B5
         view.showMessage("TRÒ CHƠI KẾT THÚC!\n" + result);
 
-        // 9.2 người chơi click nút chơi lại với choice = 0
-        // UC-08 8.1.8: JOptionPane.showOptionDialog() - hiển thị 3 lựa chọn
+        // 8.2 Khởi tạo ChartPanel thực hiện vẽ đồ thị
+        view.ScoreChartDialog chartDialog = new view.ScoreChartDialog(
+                view,
+                model.getBlackScoreHistory(),
+                model.getWhiteScoreHistory()
+        );
+        // 8.2 hiển thị chart lên
+        chartDialog.setVisible(true);
+        // 8.3
         Object[] options = { "Chơi lại", "Về Menu", "Thoát" };
         int choice = javax.swing.JOptionPane.showOptionDialog(
                 view, "Bạn muốn làm gì?", "Game Over",
                 javax.swing.JOptionPane.DEFAULT_OPTION, javax.swing.JOptionPane.QUESTION_MESSAGE,
                 null, options, options[0]);
-        // 9.3 kiểm tra điều kiện
-        // UC-08 8.1.9: Xử lý lựa chọn
-        if (choice == 0) { // Chơi lại
-            // 9.4 gọi lệnh khởi tạo lại lõi
+
+        if (choice == 0) { // Chơi lại từ bảng GameOver công cụ cũ vẫn hoạt động an toàn
             model.resetGame();
-            // 9.9 gọi nội bộ update giao diện nước đi
             updateViewFromModel();
+            
+            // Đồng bộ kiểm tra kích hoạt AI nếu ván mới lọt vào phe máy
+            if (aiEnabled && model.getLuotChoiHienTai() == aiPlayer) {
+                aiMove();
+            }
         } else if (choice == 1) { // Về Menu
             returnToMenu();
-        } else { // Thoát
+        } else {
+            // UC-11 11.1.3: System.exit(0) - thoát game
             System.exit(0);
         }
+    }
+
+    private void updateViewFromModel() {
+        view.updateView(
+                model.getBoard(),
+                model.getLuotChoiHienTai(),
+                model.getBlackScore(),
+                model.getWhiteScore(),
+                model.getValidMoves(model.getLuotChoiHienTai()));
     }
 
     // Bật/tắt AI

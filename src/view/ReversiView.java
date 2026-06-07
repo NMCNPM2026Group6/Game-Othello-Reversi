@@ -3,6 +3,7 @@ package view;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import model.ReversiModel;
 
 public class ReversiView extends JFrame {
     private JButton[][] cells;
@@ -14,6 +15,7 @@ public class ReversiView extends JFrame {
     private MainMenuPanel menuPanel;
     private JPanel gamePanel;
     private JButton btnBackToMenu;
+    private JButton btnResetGame; // <-- THÊM THUỘC TÍNH NÚT CHƠI LẠI
 
     public ReversiView() {
         // tao cua so
@@ -56,16 +58,34 @@ public class ReversiView extends JFrame {
         }
         gamePanel.add(boardPanel, BorderLayout.CENTER);
 
-        // hien thi trang thai va nut ve menu
+        // hien thi trang thai va nut hanh dong
         JPanel bottomPanel = new JPanel(new BorderLayout());
         statusLabel = new JLabel("Lượt: Đen");
         statusLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        statusLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         bottomPanel.add(statusLabel, BorderLayout.CENTER);
 
-        // UC-10 10.1.7: Tạo nút "Về Menu" trên màn hình game
+        // UC_09 9.1.3 phat triển nút  chơi lại
+        // Tạo một Panel phụ sử dụng FlowLayout xếp hàng ngang sang góc phải (EAST)
+        JPanel actionButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
+        
+        // Khởi tạo nút Chơi lại mới
+        btnResetGame = new JButton("↻ Chơi lại");
+        btnResetGame.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        btnResetGame.setFocusPainted(false);
+        
+        // Giữ lại nút Về Menu cũ của bạn
         btnBackToMenu = new JButton("← Về Menu");
         btnBackToMenu.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        bottomPanel.add(btnBackToMenu, BorderLayout.EAST);
+        btnBackToMenu.setFocusPainted(false);
+
+        // Thêm 2 nút vào nhóm Panel phụ theo thứ tự từ trái sang phải
+        actionButtonPanel.add(btnResetGame);
+        actionButtonPanel.add(btnBackToMenu);
+
+        // Gắn cả cụm nút vào vùng bên phải của thanh đáy bottomPanel
+        bottomPanel.add(actionButtonPanel, BorderLayout.EAST);
+        // ----------------------------------------------
 
         gamePanel.add(bottomPanel, BorderLayout.SOUTH);
 
@@ -75,7 +95,7 @@ public class ReversiView extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    // UC-10 10.1.6: Chuyển CardLayout về "MENU"
+    // Navigation methods
     public void showMenu() {
         cardLayout.show(cardContainer, "MENU");
     }
@@ -88,9 +108,13 @@ public class ReversiView extends JFrame {
         return menuPanel;
     }
 
-    // UC-10 10.1.8: Gắn listener cho nút "Về Menu"
     public void addBackToMenuListener(ActionListener listener) {
         btnBackToMenu.addActionListener(listener);
+    }
+
+    // <-- THÊM PHƯƠNG THỨC NÀY ĐỂ CONTROLLER LẮNG NGHE SỰ KIỆN KHỞI ĐỘNG LẠI
+    public void addResetGameListener(ActionListener listener) {
+        btnResetGame.addActionListener(listener);
     }
 
     // them su kien click chuot
@@ -127,8 +151,7 @@ public class ReversiView extends JFrame {
             }
         }
 
-        // UC-06 6.1.7: Hiển thị điểm số lên statusLabel
-        // statusLabel.setText("Lượt: [Phe] | Đen: blackScore - Trắng: whiteScore")
+        // hien thi luot choi
         if (currentPlayer == 1) {
             statusLabel.setText("Lượt: Đen | Đen: " + blackScore + " - Trắng: " + whiteScore);
         } else {
@@ -136,8 +159,7 @@ public class ReversiView extends JFrame {
         }
     }
 
-    // UC-08 8.1.7: Hiển thị thông báo kết quả trò chơi
-    // JOptionPane.showMessageDialog(this, message)
+    // hien thi thong bao
     public void showMessage(String message) {
         JOptionPane.showMessageDialog(this, message);
     }
