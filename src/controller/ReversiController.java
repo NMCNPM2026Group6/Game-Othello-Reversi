@@ -54,6 +54,9 @@ public class ReversiController implements ActionListener {
         this.view.getMenuPanel().addExitListener(e -> System.exit(0));
 
         this.view.addBackToMenuListener(e -> returnToMenu());
+        
+        // UC_09 9.1.1 dăng ky nut choi lai
+        this.view.addResetGameListener(e -> handleInGameReset());
 
         // Hiển thị Menu khi khởi động
         this.view.showMenu();
@@ -79,6 +82,34 @@ public class ReversiController implements ActionListener {
         }
         view.getMenuPanel().resetToMain();
         view.showMenu();
+    }
+
+    // uc_09 9.1.2 ham su lý choi lai truc tiep
+    private void handleInGameReset() {
+        // Hiển thị hộp thoại xác nhận UI/UX để tránh người dùng bấm nhầm
+        int choice = javax.swing.JOptionPane.showConfirmDialog(
+                view, 
+                "Bạn có chắc chắn muốn hủy ván đấu hiện tại để chơi lại ván mới?", 
+                "Xác nhận chơi lại", 
+                javax.swing.JOptionPane.YES_NO_OPTION, 
+                javax.swing.JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (choice == javax.swing.JOptionPane.YES_OPTION) {
+            // Bước an toàn: Nếu AI đang chạy ngầm, lập tức dừng luồng suy nghĩ của nó lại
+            if (pendingAiTimer != null && pendingAiTimer.isRunning()) {
+                pendingAiTimer.stop();
+            }
+
+            // Tiến hành làm sạch mô hình dữ liệu bàn cờ
+            model.resetGame();
+            updateViewFromModel();
+
+            // Nếu chế độ đấu với máy được kích hoạt và quân đi đầu (ĐEN) trùng phe AI, kích hoạt máy đi luôn
+            if (aiEnabled && model.getLuotChoiHienTai() == aiPlayer) {
+                aiMove();
+            }
+        }
     }
 
     @Override
@@ -176,9 +207,14 @@ public class ReversiController implements ActionListener {
                 javax.swing.JOptionPane.DEFAULT_OPTION, javax.swing.JOptionPane.QUESTION_MESSAGE,
                 null, options, options[0]);
 
-        if (choice == 0) { // Chơi lại
+        if (choice == 0) { // Chơi lại từ bảng GameOver công cụ cũ vẫn hoạt động an toàn
             model.resetGame();
             updateViewFromModel();
+            
+            // Đồng bộ kiểm tra kích hoạt AI nếu ván mới lọt vào phe máy
+            if (aiEnabled && model.getLuotChoiHienTai() == aiPlayer) {
+                aiMove();
+            }
         } else if (choice == 1) { // Về Menu
             returnToMenu();
         } else {

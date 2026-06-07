@@ -1,8 +1,5 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ReversiModel {
     public static final int EMPTY = 0;
     public static final int BLACK = 1;
@@ -15,10 +12,6 @@ public class ReversiModel {
 
     private final int[] dx = { 0, 0, 1, -1, -1, 1, 1, -1 };
     private final int[] dy = { 1, -1, 0, 0, 1, 1, -1, -1 };
-
-    // Lưu lịch sử điểm số qua từng lượt đi
-    private List<Integer> blackScoreHistory = new ArrayList<>();
-    private List<Integer> whiteScoreHistory = new ArrayList<>();
 
     public ReversiModel() {
         board = new int[8][8];
@@ -41,12 +34,6 @@ public class ReversiModel {
         LuotChoiHienTai = BLACK;
         // 9.8 gọi updateScore đặt điểm số về Đen: 2, Trắng: 2
         updateScore();
-
-        // Làm sạch và nạp điểm số xuất phát (2-2) cho ván mới
-        blackScoreHistory.clear();
-        whiteScoreHistory.clear();
-        blackScoreHistory.add(2);
-        whiteScoreHistory.add(2);
     }
 
     // UC-03: Đặt quân cờ
@@ -54,15 +41,8 @@ public class ReversiModel {
         if (NuocDiHopLe(row, col, LuotChoiHienTai)) {
             board[row][col] = LuotChoiHienTai;
             latCacQuanCo(row, col);
-            // 8.0.2
-            updateScore();
-
-            // 8.0.3 thêm điểm vào lịch sử
-            // Ghi nhận điểm số mới vào lịch sử đồ thị
-            blackScoreHistory.add(blackScore);
-            whiteScoreHistory.add(whiteScore);
-
             DoiLuot();
+            updateScore();
             return true;
         }
         return false;
@@ -181,7 +161,4 @@ public class ReversiModel {
     // UC-06 6.1.6: Getter cung cấp điểm số cho Controller/View
     public int getBlackScore() { return blackScore; }
     public int getWhiteScore() { return whiteScore; }
-
-    public List<Integer> getBlackScoreHistory() { return blackScoreHistory; }
-    public List<Integer> getWhiteScoreHistory() { return whiteScoreHistory; }
 }
