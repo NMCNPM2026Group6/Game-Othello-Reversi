@@ -242,4 +242,12 @@ public class ReversiController implements ActionListener {
         this.aiPlayer = player;
         this.ai = new ReversiAI(player);
     }
+
+    public void resetGame() {
+        model.resetGame();
+        updateViewFromModel();
+        if (aiEnabled && model.getLuotChoiHienTai() == aiPlayer) {
+            aiMove();
+        }
+    }
 }
