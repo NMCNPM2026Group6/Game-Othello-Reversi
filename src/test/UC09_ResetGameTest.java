@@ -41,7 +41,7 @@ public class UC09_ResetGameTest {
     public void setUp() {
         model = new ReversiModel();
         view = new ReversiView();
-        controller = new ReversiController(view, model);
+        controller = new ReversiController(model, view);
         // Không cấu hình chế độ, mặc định PVP
     }
 
@@ -56,12 +56,14 @@ public class UC09_ResetGameTest {
         // Nước đi hợp lệ đầu tiên: Đen tại (2,3)
         ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "2,3");
         controller.actionPerformed(event);
-        // Lúc này lượt là Trắng
-        // Trắng đi tại (3,2) - hợp lệ
-        event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "3,2");
+        // Lúc này lượt là Trắng. Trắng đi tại (4,2)
+        event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "4,2");
         controller.actionPerformed(event);
-        // Đen đi tại (4,5)
-        event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "4,5");
+        // Đen đi tại (5,3)
+        event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "5,3");
+        controller.actionPerformed(event);
+        // Trắng đi tại (2,2)
+        event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "2,2");
         controller.actionPerformed(event);
         // Bàn cờ đã có hơn 4 quân, điểm số khác 2-2
     }
@@ -95,10 +97,10 @@ public class UC09_ResetGameTest {
         // 3. Kiểm tra trạng thái sau reset
         // 3.1 Bàn cờ: 4 quân khởi tạo
         int[][] board = model.getBoard();
-        assertEquals("Ô (3,3) phải là Đen", ReversiModel.BLACK, board[3][3]);
-        assertEquals("Ô (3,4) phải là Trắng", ReversiModel.WHITE, board[3][4]);
-        assertEquals("Ô (4,3) phải là Trắng", ReversiModel.WHITE, board[4][3]);
-        assertEquals("Ô (4,4) phải là Đen", ReversiModel.BLACK, board[4][4]);
+        assertEquals("Ô (3,3) phải là Trắng", ReversiModel.WHITE, board[3][3]);
+        assertEquals("Ô (3,4) phải là Đen", ReversiModel.BLACK, board[3][4]);
+        assertEquals("Ô (4,3) phải là Đen", ReversiModel.BLACK, board[4][3]);
+        assertEquals("Ô (4,4) phải là Trắng", ReversiModel.WHITE, board[4][4]);
         
         // 3.2 Điểm số
         assertEquals("Điểm Đen = 2", 2, model.getBlackScore());
@@ -189,20 +191,23 @@ public class UC09_ResetGameTest {
         board[3][4] = ReversiModel.WHITE;
         board[4][3] = ReversiModel.WHITE;
         board[4][4] = ReversiModel.BLACK;
-        model.updateScores();
+        // Gọi updateScore() qua reflection
+        java.lang.reflect.Method m = model.getClass().getDeclaredMethod("updateScore");
+        m.setAccessible(true);
+        m.invoke(model);
         // Kiểm tra không còn nước đi
-        assertFalse("Không còn nước đi cho Đen", model.hasValidMoves(ReversiModel.BLACK));
-        assertFalse("Không còn nước đi cho Trắng", model.hasValidMoves(ReversiModel.WHITE));
+        assertFalse("Không còn nước đi cho Đen", model.CoNuocDiHopLe(ReversiModel.BLACK));
+        assertFalse("Không còn nước đi cho Trắng", model.CoNuocDiHopLe(ReversiModel.WHITE));
         
         // 2. Reset game
         controller.resetGame();
         
         // 3. Kiểm tra bàn cờ về khởi tạo
         board = model.getBoard();
-        assertEquals("(3,3) Đen", ReversiModel.BLACK, board[3][3]);
-        assertEquals("(3,4) Trắng", ReversiModel.WHITE, board[3][4]);
-        assertEquals("(4,3) Trắng", ReversiModel.WHITE, board[4][3]);
-        assertEquals("(4,4) Đen", ReversiModel.BLACK, board[4][4]);
+        assertEquals("(3,3) Trắng", ReversiModel.WHITE, board[3][3]);
+        assertEquals("(3,4) Đen", ReversiModel.BLACK, board[3][4]);
+        assertEquals("(4,3) Đen", ReversiModel.BLACK, board[4][3]);
+        assertEquals("(4,4) Trắng", ReversiModel.WHITE, board[4][4]);
         assertEquals("Điểm Đen = 2", 2, model.getBlackScore());
         assertEquals("Lượt là Đen", ReversiModel.BLACK, model.getLuotChoiHienTai());
         

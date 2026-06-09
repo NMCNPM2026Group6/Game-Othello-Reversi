@@ -30,7 +30,7 @@ import javax.swing.JButton;
  *   - Bước 9.1.5: Các ô khác không bị highlight
  *   - Sau reset, điểm số, lượt chơi được reset chính xác
  */
-public class UC09_ResetGameTest {
+public class UC09_MainFlow_ChoiLaiTest {
     private ReversiModel model;
     private ReversiView view;
 
@@ -66,10 +66,10 @@ public class UC09_ResetGameTest {
 
         // Kiểm tra bàn cờ
         int[][] board = model.getBoard();
-        assertEquals("(3,3) là Đen", ReversiModel.BLACK, board[3][3]);
-        assertEquals("(3,4) là Trắng", ReversiModel.WHITE, board[3][4]);
-        assertEquals("(4,3) là Trắng", ReversiModel.WHITE, board[4][3]);
-        assertEquals("(4,4) là Đen", ReversiModel.BLACK, board[4][4]);
+        assertEquals("(3,3) là Trắng", ReversiModel.WHITE, board[3][3]);
+        assertEquals("(3,4) là Đen", ReversiModel.BLACK, board[3][4]);
+        assertEquals("(4,3) là Đen", ReversiModel.BLACK, board[4][3]);
+        assertEquals("(4,4) là Trắng", ReversiModel.WHITE, board[4][4]);
 
         // Kiểm tra điểm
         assertEquals("Điểm Đen = 2", 2, model.getBlackScore());
@@ -147,14 +147,14 @@ public class UC09_ResetGameTest {
         JButton[][] cells = getCells();
 
         // Kiểm tra nội dung text của các ô trung tâm
-        assertEquals("Ô (3,3) hiển thị quân Đen (●)", "●", cells[3][3].getText());
-        assertEquals("Ô (3,4) hiển thị quân Trắng (●)", "●", cells[3][4].getText());
-        assertEquals("Ô (4,3) hiển thị quân Trắng (●)", "●", cells[4][3].getText());
-        assertEquals("Ô (4,4) hiển thị quân Đen (●)", "●", cells[4][4].getText());
+        assertEquals("Ô (3,3) hiển thị quân Trắng (O)", "O", cells[3][3].getText());
+        assertEquals("Ô (3,4) hiển thị quân Đen (O)", "O", cells[3][4].getText());
+        assertEquals("Ô (4,3) hiển thị quân Đen (O)", "O", cells[4][3].getText());
+        assertEquals("Ô (4,4) hiển thị quân Trắng (O)", "O", cells[4][4].getText());
 
         // Kiểm tra màu chữ (foreground) của quân
-        assertEquals("Quân Đen màu đen", Color.BLACK, cells[3][3].getForeground());
-        assertEquals("Quân Trắng màu trắng", Color.WHITE, cells[3][4].getForeground());
+        assertEquals("Quân Trắng màu trắng", Color.WHITE, cells[3][3].getForeground());
+        assertEquals("Quân Đen màu đen", Color.BLACK, cells[3][4].getForeground());
 
         // Kiểm tra highlight
         assertEquals("(2,3) highlight xanh nhạt", MAU_GOI_Y, cells[2][3].getBackground());
@@ -164,7 +164,7 @@ public class UC09_ResetGameTest {
     }
 
     public static void main(String[] args) {
-        org.junit.runner.JUnitCore.main("test.UC09_ResetGameTest");
+        org.junit.runner.JUnitCore.main("test.UC09_MainFlow_ChoiLaiTest");
     }
 }
 
